@@ -48,6 +48,25 @@ int switch_door  = 22;
 //states
 int current_alarm_level = 0; // 0: safe, 1: prearmed, 2: armed, 3: prealarm, 4: alarm
 
+void lcd_status() {
+  switch (current_alarm_level) {
+    case 0:
+      lcd.clear();
+      lcd.setCursor(0,0);
+      lcd.print("UNSCHARF");
+      lcd.setCursor(0,1);
+      lcd.print("");
+      break;
+    case 1:
+      lcd.clear();
+      lcd.setCursor(0,0);
+      lcd.print("SCHARF IN");
+      lcd.setCursor(0,1);
+      lcd.print("");
+      break;
+
+  }
+}
 
 void setup() {
 
@@ -72,13 +91,7 @@ void setup() {
   current_alarm_level = 1;
   delay_pre_armed.start(10000, AsyncDelay::MILLIS);
   
-  lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.print("ANLAGE VORSCHARF");
-  lcd.setCursor(0,1);
-  lcd.print("PIN: ");
-  lcd.blink();
-  
+  lcd_status();
 
 }
 
@@ -100,10 +113,9 @@ void loop() {
     current_alarm_level = 2;
     lcd.clear();
     lcd.setCursor(0,0);
-    lcd.print(" ANLAGE  SCHARF ");
+    lcd.print("SCHARF");
     lcd.setCursor(0,1);
-    lcd.print("PIN: ");
-    lcd.blink();
+    lcd.print("");
     
   }
 
@@ -111,10 +123,9 @@ void loop() {
     current_alarm_level = 4;
     lcd.clear();
     lcd.setCursor(0,0);
-    lcd.print("     ALARM     ");
+    lcd.print("ALARM");
     lcd.setCursor(0,1);
-    lcd.print("SUPERPIN: ");
-    lcd.blink();
+    lcd.print("");
   
   }
 
@@ -124,9 +135,9 @@ void loop() {
     delay_pre_alarm.start(10000, AsyncDelay::MILLIS);
     lcd.clear();
     lcd.setCursor(0,0);
-    lcd.print("    VORALARM    ");
+    lcd.print("VORALARM");
     lcd.setCursor(0,1);
-    lcd.print("PIN: ");
+    lcd.print("");
     lcd.blink();
   
   }
