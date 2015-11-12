@@ -2,6 +2,20 @@
 #include <AsyncDelay.h>
 #include <Keypad.h>
 #include <LED.h>
+#include <LiquidCrystal.h>
+
+// Display
+int drs = 12;
+int den = 11;
+int dd4 = 5;
+int dd5 = 4;
+int dd6 = 3;
+int dd7 = 2;
+// RW - GND
+// VCC - GND
+// V0 - 10k
+// VDD = 5V
+LiquidCrystal lcd(drs, den, dd4, dd5, dd6, dd7);
 
 // Timers
 AsyncDelay delay_pre_alarm;
@@ -34,6 +48,7 @@ int switch_door  = 22;
 //states
 int current_alarm_level = 0; // 0: safe, 1: prearmed, 2: armed, 3: prealarm, 4: alarm
 
+
 void setup() {
 
   pinMode(switch_door, INPUT);
@@ -44,11 +59,25 @@ void setup() {
 
   blink_time.start(5000, AsyncDelay::MILLIS);
   blink_time_a.start(2000, AsyncDelay::MILLIS);
-  
+
+  lcd.begin(16,2);
+  lcd.print("Arduino Alert");
+  lcd.setCursor(0,1);
+  lcd.print("System 0.1");
+
+  delay(5000);
+
   
   //arm
   current_alarm_level = 1;
   delay_pre_armed.start(10000, AsyncDelay::MILLIS);
+  
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("ANLAGE VORSCHARF");
+  lcd.setCursor(0,1);
+  lcd.print("PIN: ");
+  lcd.blink();
   
 
 }
@@ -59,7 +88,8 @@ void loop() {
   char key = keypad.getKey();
  
   if (key != NO_KEY) {
-    Serial.println(key);
+    lcd.print("*");
+    delay(300);
   }
 
   //print current alarm level
@@ -68,17 +98,37 @@ void loop() {
   //check if pre armed countdown is over
   if (current_alarm_level == 1 && delay_pre_armed.isExpired()) {
     current_alarm_level = 2;
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print(" ANLAGE  SCHARF ");
+    lcd.setCursor(0,1);
+    lcd.print("PIN: ");
+    lcd.blink();
     
   }
 
   if (current_alarm_level == 3 && delay_pre_alarm.isExpired()) {
     current_alarm_level = 4;
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("     ALARM     ");
+    lcd.setCursor(0,1);
+    lcd.print("SUPERPIN: ");
+    lcd.blink();
+  
   }
 
   //check open door if system is armed
   if (current_alarm_level == 2 && digitalRead(switch_door) == 0) {
     current_alarm_level = 3;
     delay_pre_alarm.start(10000, AsyncDelay::MILLIS);
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("    VORALARM    ");
+    lcd.setCursor(0,1);
+    lcd.print("PIN: ");
+    lcd.blink();
+  
   }
   
 }
