@@ -47,6 +47,7 @@ int switch_door  = 22;
 //states
 int current_alarm_level = 0; // 0: safe, 1: prearmed, 2: armed, 3: prealarm, 4: alarm
 
+<<<<<<< HEAD
 String pin = "123456";
 String current_pin = "      ";
 String empty_pin = "      ";
